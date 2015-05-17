@@ -51,7 +51,7 @@ LOCAL_SHARED_LIBRARIES := libdl
 
 LOCAL_MODULE:= libsqlite
 
-LOCAL_C_INCLUDES += $(call include-path-for, system-core)/cutils
+LOCAL_C_INCLUDES += $(call include-path-for, system-core)/cutils external/icu/icu4c/source/i18n external/icu/icu4c/source/common
 
 LOCAL_SHARED_LIBRARIES += liblog \
             libicuuc \

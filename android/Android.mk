@@ -5,7 +5,7 @@ libsqlite3_android_local_src_files := \
 	OldPhoneNumberUtils.cpp \
 	sqlite3_android.cpp
 
-libsqlite3_android_c_includes := external/sqlite/dist
+libsqlite3_android_c_includes := external/sqlite/dist external/icu/icu4c/source/i18n external/icu/icu4c/source/common
 
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES:= $(libsqlite3_android_local_src_files)

@@ -1,6 +1,5 @@
-diff -rud orig/shell.c ./shell.c
---- orig/shell.c	2015-05-20 20:28:10.000000000 +0200
-+++ ./shell.c	2015-05-22 22:31:33.275564981 +0200
+--- orig/shell.c	2015-07-31 19:43:21.071147825 -0400
++++ ./shell.c	2015-07-31 19:43:21.097147826 -0400
 @@ -52,6 +52,11 @@
  #endif
  #include <ctype.h>
@@ -13,7 +12,7 @@ diff -rud orig/shell.c ./shell.c
  
  #if !defined(_WIN32) && !defined(WIN32)
  # include <signal.h>
-@@ -1938,6 +1943,21 @@
+@@ -1941,6 +1946,21 @@
                              readfileFunc, 0, 0);
      sqlite3_create_function(p->db, "writefile", 2, SQLITE_UTF8, 0,
                              writefileFunc, 0, 0);
@@ -35,11 +34,19 @@ diff -rud orig/shell.c ./shell.c
    }
  }
  
-diff -rud orig/sqlite3.c ./sqlite3.c
---- orig/sqlite3.c	2015-05-20 20:28:10.000000000 +0200
-+++ ./sqlite3.c	2015-05-22 22:31:33.293565179 +0200
-@@ -25292,6 +25292,13 @@
+--- orig/sqlite3.c	2015-07-31 19:43:21.095147826 -0400
++++ sqlite3.c	2015-07-31 20:10:58.411196991 -0400
+@@ -17203,7 +17203,7 @@
+ ** The malloc.h header file is needed for malloc_usable_size() function
+ ** on some systems (e.g. Linux).
  */
+-#if HAVE_MALLOC_H && HAVE_MALLOC_USABLE_SIZE
++#if defined(HAVE_MALLOC_H) && defined(HAVE_MALLOC_USABLE_SIZE)
+ #  define SQLITE_USE_MALLOC_H 1
+ #  define SQLITE_USE_MALLOC_USABLE_SIZE 1
+ /*
+@@ -25807,6 +25807,13 @@
+ /* #include "sqliteInt.h" */
  #if SQLITE_OS_UNIX              /* This file is used on unix only */
  
 +/* Use posix_fallocate() if it is available
@@ -52,7 +59,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
  /*
  ** There are various methods for file locking used for concurrency
  ** control:
-@@ -25846,7 +25853,12 @@
+@@ -26361,7 +26368,12 @@
  #else
    { "pread64",      (sqlite3_syscall_ptr)0,          0  },
  #endif
@@ -65,7 +72,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
  
    { "write",        (sqlite3_syscall_ptr)write,      0  },
  #define osWrite     ((ssize_t(*)(int,const void*,size_t))aSyscall[11].pCurrent)
-@@ -25864,8 +25876,14 @@
+@@ -26379,8 +26391,14 @@
  #else
    { "pwrite64",     (sqlite3_syscall_ptr)0,          0  },
  #endif
@@ -80,7 +87,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
  
    { "fchmod",       (sqlite3_syscall_ptr)fchmod,     0  },
  #define osFchmod    ((int(*)(int,mode_t))aSyscall[14].pCurrent)
-@@ -29115,7 +29133,7 @@
+@@ -29630,7 +29648,7 @@
    SimulateIOError( rc=1 );
    if( rc!=0 ){
      storeLastErrno((unixFile*)id, errno);
@@ -89,7 +96,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
    }
    *pSize = buf.st_size;
  
-@@ -29151,7 +29169,7 @@
+@@ -29666,7 +29684,7 @@
      struct stat buf;              /* Used to hold return values of fstat() */
     
      if( osFstat(pFile->h, &buf) ){
@@ -98,7 +105,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
      }
  
      nSize = ((nByte+pFile->szChunk-1) / pFile->szChunk) * pFile->szChunk;
-@@ -29736,7 +29754,7 @@
+@@ -30251,7 +30269,7 @@
      ** with the same permissions.
      */
      if( osFstat(pDbFd->h, &sStat) && pInode->bProcessLock==0 ){
@@ -107,7 +114,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
        goto shm_open_err;
      }
  
-@@ -31082,7 +31100,7 @@
+@@ -31597,7 +31615,7 @@
        *pUid = sStat.st_uid;
        *pGid = sStat.st_gid;
      }else{
@@ -116,7 +123,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
      }
    }else if( flags & SQLITE_OPEN_DELETEONCLOSE ){
      *pMode = 0600;
-@@ -105877,7 +105895,7 @@
+@@ -107032,7 +107050,7 @@
    }
    if( pDb->pSchema->file_format>SQLITE_MAX_FILE_FORMAT ){
      sqlite3SetString(pzErrMsg, db, "unsupported file format");
@@ -125,7 +132,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
      goto initone_error_out;
    }
  
-@@ -130850,9 +130868,9 @@
+@@ -132306,9 +132324,9 @@
  #endif
  
  #ifdef SQLITE_ENABLE_FTS3
@@ -138,7 +145,7 @@ diff -rud orig/sqlite3.c ./sqlite3.c
  #endif
  
  #ifdef SQLITE_ENABLE_ICU
-@@ -136910,16 +136928,28 @@
+@@ -138378,16 +138396,28 @@
    ** module with sqlite.
    */
    if( SQLITE_OK==rc 
